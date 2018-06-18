@@ -1,5 +1,6 @@
 package com.annybudong;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.annybudong.slipview.SlipView;
 
@@ -32,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        recyclerView.setAdapter(new MyAdapter(mockData()));
+        recyclerView.setAdapter(new MyAdapter(this, mockData()));
     }
 
     private List<String> mockData() {
@@ -47,10 +49,12 @@ public class MainActivity extends AppCompatActivity {
 
     public static class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
 
-        private List<String> mData;
+        private Context ctx;
+        private List<String> data;
 
-        public MyAdapter(List<String> data) {
-            this.mData = data;
+        public MyAdapter(Context ctx, List<String> data) {
+            this.ctx = ctx;
+            this.data = data;
         }
 
         @Override
@@ -63,14 +67,14 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             // 绑定数据
-            holder.contentTv.setText(mData.get(position));
+            holder.contentTv.setText(data.get(position));
             holder.contentTv.setTag(position);
             holder.rooView.closeMenu();
         }
 
         @Override
         public int getItemCount() {
-            return mData == null ? 0 : mData.size();
+            return data == null ? 0 : data.size();
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
@@ -86,6 +90,25 @@ public class MainActivity extends AppCompatActivity {
                 contentTv = (TextView) itemView.findViewById(R.id.content);
                 deleteMenu = (TextView) itemView.findViewById(R.id.menu_delete);
                 editMenu = (TextView) itemView.findViewById(R.id.menu_edit);
+                contentTv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = (int) v.getTag();
+                        Toast.makeText(ctx, "click item" + position, Toast.LENGTH_SHORT).show();
+                    }
+                });
+                deleteMenu.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(ctx, "click delete.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                editMenu.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(ctx, "click edit.", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         }
     }

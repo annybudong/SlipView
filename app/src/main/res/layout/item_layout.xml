@@ -3,16 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="70dp"
     android:orientation="horizontal">
+
     <TextView
         android:id="@+id/content"
-        android:clickable="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
         android:textSize="16sp"/>
+
     <TextView
         android:id="@+id/menu_delete"
-        android:clickable="false"
         android:layout_width="100dp"
         android:layout_height="match_parent"
         android:background="#ff7766"
@@ -22,7 +22,6 @@
         android:gravity="center"/>
     <TextView
         android:id="@+id/menu_edit"
-        android:clickable="false"
         android:layout_width="100dp"
         android:layout_height="match_parent"
         android:text="编辑"
