@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.annybudong.slipview.SlipView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:orientation="horizontal">
+    <TextView
+        android:id="@+id/content"
+        android:clickable="false"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textSize="16sp"/>
+    <TextView
+        android:id="@+id/menu_delete"
+        android:clickable="false"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:background="#ff7766"
+        android:text="删除"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:gravity="center"/>
+    <TextView
+        android:id="@+id/menu_edit"
+        android:clickable="false"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:text="编辑"
+        android:background="#00ff88"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:gravity="center"/>
+</com.annybudong.slipview.SlipView>
