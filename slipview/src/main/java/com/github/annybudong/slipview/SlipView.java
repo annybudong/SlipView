@@ -1,4 +1,4 @@
-package com.annybudong.slipview;
+package com.github.annybudong.slipview;
 
 import android.content.Context;
 import android.support.annotation.Nullable;

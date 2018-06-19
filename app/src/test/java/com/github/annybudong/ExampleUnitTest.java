@@ -1,4 +1,4 @@
-package com.annybudong;
+package com.github.annybudong;
 
 import org.junit.Test;
 

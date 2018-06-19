@@ -1,4 +1,4 @@
-package com.annybudong.slipview;
+package com.github.annybudong.slipview;
 
 import org.junit.Test;
 
