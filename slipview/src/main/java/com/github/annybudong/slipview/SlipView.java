@@ -23,6 +23,7 @@ public class SlipView extends LinearLayout {
     private boolean hasConsumeDownEventByChild = true;      //child是否消费了down事件
 
     private boolean inited = false;
+    private boolean scrollable = true;
 
     public SlipView(Context context) {
         super(context);
@@ -67,6 +68,10 @@ public class SlipView extends LinearLayout {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
+        if (!scrollable) {
+            return super.onInterceptTouchEvent(event);
+        }
+
         int x = (int) event.getX();
         int y = (int) event.getY();
 
@@ -95,6 +100,10 @@ public class SlipView extends LinearLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (!scrollable) {
+            return super.onInterceptTouchEvent(event);
+        }
+
         int x = (int) event.getX();
         int y = (int) event.getY();
 
@@ -185,7 +194,18 @@ public class SlipView extends LinearLayout {
         }
     }
 
+    /**
+     * 关闭侧滑菜单
+     */
     public void closeMenu() {
         scrollTo(0, 0);
+    }
+
+    /**
+     * 是否允许侧滑，默认为true
+     * @param scrollable
+     */
+    public void enableScroll(boolean scrollable) {
+        this.scrollable = scrollable;
     }
 }

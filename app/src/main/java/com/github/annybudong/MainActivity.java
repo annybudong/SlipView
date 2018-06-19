@@ -12,7 +12,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.annybudong.slipview.SlipView;
+
+import com.github.annybudong.slipview.SlipView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
         class ViewHolder extends RecyclerView.ViewHolder {
 
+            private boolean scrollable = true;
             SlipView rooView;
             TextView contentTv;
             TextView deleteMenu;
@@ -93,8 +95,9 @@ public class MainActivity extends AppCompatActivity {
                 contentTv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        int position = (int) v.getTag();
-                        Toast.makeText(ctx, "click item" + position, Toast.LENGTH_SHORT).show();
+                        scrollable = !scrollable;
+                        rooView.enableScroll(scrollable);
+                        Toast.makeText(ctx, "允许侧滑:" + scrollable, Toast.LENGTH_SHORT).show();
                     }
                 });
                 deleteMenu.setOnClickListener(new View.OnClickListener() {
