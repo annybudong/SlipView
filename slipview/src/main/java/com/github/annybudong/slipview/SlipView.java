@@ -203,7 +203,7 @@ public class SlipView extends LinearLayout {
 
     /**
      * 是否允许侧滑，默认为true
-     * @param scrollable
+     * @param scrollable ture-允许 false-禁止
      */
     public void enableScroll(boolean scrollable) {
         this.scrollable = scrollable;
