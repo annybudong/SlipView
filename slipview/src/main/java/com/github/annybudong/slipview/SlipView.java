@@ -1,7 +1,6 @@
 package com.github.annybudong.slipview;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -30,12 +29,12 @@ public class SlipView extends LinearLayout {
         init(context);
     }
 
-    public SlipView(Context context, @Nullable AttributeSet attrs) {
+    public SlipView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public SlipView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public SlipView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
     }
