@@ -194,7 +194,7 @@ public class SlipView extends LinearLayout {
     }
 
     /**
-     * 关闭侧滑菜单
+     * 关闭侧滑菜单（没有动画）
      */
     public void closeMenu() {
         scrollTo(0, 0);
@@ -206,5 +206,9 @@ public class SlipView extends LinearLayout {
      */
     public void enableScroll(boolean scrollable) {
         this.scrollable = scrollable;
+    }
+
+    public boolean isMenuShowing() {
+        return getScrollX() > 0 ? true : false;
     }
 }
