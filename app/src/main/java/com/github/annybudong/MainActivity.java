@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private final static String TAG = MainActivity.class.getName();
 
     private RecyclerView recyclerView;
 
@@ -48,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         return data;
     }
 
-    public static class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
+    public static class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> implements SlipView.OnScrollListener {
 
         private Context ctx;
         private List<String> data;
@@ -71,11 +74,22 @@ public class MainActivity extends AppCompatActivity {
             holder.contentTv.setText(data.get(position));
             holder.contentTv.setTag(position);
             holder.rooView.closeMenu();
+            holder.rooView.setOnScrollListener(this);
         }
 
         @Override
         public int getItemCount() {
             return data == null ? 0 : data.size();
+        }
+
+        @Override
+        public void onScrollStart() {
+            Log.d(TAG, "onScrollStart");
+        }
+
+        @Override
+        public void onScrollEnd() {
+            Log.e(TAG, "onScrollEnd");
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {

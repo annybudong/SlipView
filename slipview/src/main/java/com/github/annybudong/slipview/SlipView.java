@@ -11,6 +11,13 @@ import android.widget.Scroller;
 
 public class SlipView extends LinearLayout {
 
+    public interface OnScrollListener {
+
+        void onScrollStart();
+
+        void onScrollEnd();
+    }
+
     private Scroller scroller;
     private VelocityTracker velocityTracker;
 
@@ -19,10 +26,12 @@ public class SlipView extends LinearLayout {
     private int menuDistance;   //菜单宽度
     private int touchSlop;      //超过此距离，认为手指正在滑动
 
+    private boolean inited = false;                         //是否已初始化
+    private boolean scrollable = true;                      //是否允许滚动
+    private boolean isScrolling = false;                    //是否正在滚动
     private boolean hasConsumeDownEventByChild = true;      //child是否消费了down事件
 
-    private boolean inited = false;
-    private boolean scrollable = true;
+    private OnScrollListener onScrollListener;
 
     public SlipView(Context context) {
         super(context);
@@ -51,6 +60,7 @@ public class SlipView extends LinearLayout {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
+        //onMeasure会调用多次，所以这段代码也会执行多次，但是最后一次计算结果必然是正确的。
         int childCount = getChildCount();
         int sumDistance = 0;
         for (int i = 0; i < childCount; i++) {
@@ -85,7 +95,7 @@ public class SlipView extends LinearLayout {
                 int deltaX = x - lastX;
                 int deltaY = y - lastY;
 
-                if (Math.abs(deltaX) > touchSlop && Math.abs(deltaX) > Math.abs(deltaY) ) {
+                if (!isScrolling && Math.abs(deltaX) > touchSlop && Math.abs(deltaX) > Math.abs(deltaY) ) {
                     getParent().requestDisallowInterceptTouchEvent(true);
                     return true;
                 }
@@ -99,7 +109,9 @@ public class SlipView extends LinearLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (!scrollable) {
+
+        //如果禁止滚动，或者正在滚动，那么不要自己处理event事件了。
+        if (!scrollable || isScrolling) {
             return super.onInterceptTouchEvent(event);
         }
 
@@ -147,7 +159,7 @@ public class SlipView extends LinearLayout {
             case MotionEvent.ACTION_CANCEL:
                 int dx;
                 hasConsumeDownEventByChild = true;
-                int xVelocity = getXVelocity();
+                int xVelocity = getXVelocity();          //通过加速度方向来判断手指抬起时正在朝哪边滚动
                 if (xVelocity < 0) {
                     dx = menuDistance - getScrollX();
                 } else if (xVelocity > 0) {
@@ -158,6 +170,10 @@ public class SlipView extends LinearLayout {
                     dx = -getScrollX();
                 }
 
+                if (onScrollListener != null) {
+                    isScrolling = true;
+                    onScrollListener.onScrollStart();
+                }
                 scroller.startScroll(getScrollX(), 0, dx, 0);
                 invalidate();
 
@@ -190,6 +206,9 @@ public class SlipView extends LinearLayout {
         if (scroller.computeScrollOffset()) {
             scrollTo(scroller.getCurrX(), scroller.getCurrY());
             invalidate();
+        } else if (onScrollListener != null && isScrolling) {
+            isScrolling = false;
+            onScrollListener.onScrollEnd();
         }
     }
 
@@ -208,7 +227,15 @@ public class SlipView extends LinearLayout {
         this.scrollable = scrollable;
     }
 
+    /**
+     * 侧滑菜单是否正在显示
+     * @return
+     */
     public boolean isMenuShowing() {
         return getScrollX() > 0 ? true : false;
+    }
+
+    public void setOnScrollListener(OnScrollListener listener) {
+        this.onScrollListener = listener;
     }
 }
