@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
             // 绑定数据
             holder.contentTv.setText(data.get(position));
             holder.contentTv.setTag(position);
-            holder.rooView.closeMenu();
+            holder.rooView.closeMenu(0);
             holder.rooView.setOnScrollListener(this);
         }
 
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                 editMenu.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(ctx, "click edit.", Toast.LENGTH_SHORT).show();
+                        rooView.closeMenu(200);
                     }
                 });
             }

@@ -214,9 +214,17 @@ public class SlipView extends LinearLayout {
 
     /**
      * 关闭侧滑菜单（没有动画）
+     *
+     * @param duration 单位ms
      */
-    public void closeMenu() {
-        scrollTo(0, 0);
+    public void closeMenu(int duration) {
+        if (duration == 0) {
+            scrollTo(0, 0);
+        } else {
+            int x = getScrollX();
+            scroller.startScroll(x, 0, -x, 0, duration);
+            invalidate();
+        }
     }
 
     /**
