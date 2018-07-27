@@ -41,4 +41,4 @@ github上有不少左滑控件，有些存在bug，有些写得太重学习成�
 
 第一个TextView是显示区域，后面两个TextView就是左滑按钮，如果想要更多左滑按钮，依次添加就好。
 
-**PS:** 此例中显示区域是一个TextView，实际开发中很有可能是LinearLayout、RelativeLayout等ViewGroup，别担心，直接替换即可。
+**PS:** 此例中显示区域是一个TextView，实际开发中很有可能是LinearLayout、RelativeLayout等ViewGroup，别担心，直接替换即可。 
