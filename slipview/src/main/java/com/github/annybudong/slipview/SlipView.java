@@ -2,10 +2,12 @@ package com.github.annybudong.slipview;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Scroller;
 
@@ -53,6 +55,19 @@ public class SlipView extends LinearLayout {
             scroller = new Scroller(context);
             inited = true;
             touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
+        }
+    }
+
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+
+        if (getOrientation() != HORIZONTAL) {
+            throw new AssertionError("The orientation of SlipView must be HORIZONTAL! Please check your layout file.");
+        }
+
+        if (getChildAt(0).getLayoutParams().width != LayoutParams.MATCH_PARENT) {
+            throw new AssertionError("The width of first child in SlipView must be MATCH_PARENT! Please check your layout file.");
         }
     }
 
