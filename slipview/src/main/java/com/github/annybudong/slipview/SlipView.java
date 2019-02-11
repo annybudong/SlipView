@@ -76,8 +76,6 @@ public class SlipView extends LinearLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         if (widthMode == MeasureSpec.AT_MOST) {
             //SlipView的宽度不应该是wrap_content，否则侧滑菜单可能无法隐藏
@@ -97,6 +95,8 @@ public class SlipView extends LinearLayout {
          * 为SlipView的长度，两者相减则是隐藏在右侧的菜单的长度。
          */
         menuWidth = lineWidth - getMeasuredWidth();
+
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     @Override
