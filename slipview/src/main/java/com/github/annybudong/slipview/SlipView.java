@@ -23,7 +23,7 @@ public class SlipView extends LinearLayout {
 
     private int lastX;          //最近一次MotionEvent的x坐标
     private int lastY;          //最近一次MotionEvent的y坐标
-    private int menuDistance;   //菜单宽度
+    private int menuWidth;      //菜单宽度
     private int touchSlop;      //超过此距离，认为手指正在滑动
 
     private boolean inited = false;                         //是否已初始化
@@ -61,20 +61,16 @@ public class SlipView extends LinearLayout {
         super.onFinishInflate();
 
         if (getOrientation() != HORIZONTAL) {
-            throw new AssertionError("The orientation of SlipView must be HORIZONTAL! Please check your layout file.");
+            throw new AssertionError("The orientation of SlipView must be HORIZONTAL!");
         }
 
-        if (getChildCount() < 1) {
-            throw new AssertionError("The count of child in SlipView must be greater than 1! Please check your layout file.");
+        if (getChildCount() <= 1) {
+            throw new AssertionError("The count of child in SlipView must be greater than 1!");
         }
 
         LinearLayout.LayoutParams params = (LayoutParams) getChildAt(0).getLayoutParams();
         if (params.width != LayoutParams.MATCH_PARENT) {
-            throw new AssertionError("The width of first child in SlipView must be MATCH_PARENT! Please check your layout file.");
-        }
-
-        if (params.leftMargin != 0 || params.rightMargin != 0) {
-            throw new AssertionError("The left-margin and right-margin of first child in SlipView must be 0! Please check your layout file.");
+            throw new AssertionError("The width of first child in SlipView must be MATCH_PARENT!");
         }
     }
 
@@ -82,19 +78,25 @@ public class SlipView extends LinearLayout {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        //onMeasure会调用多次，所以这段代码也会执行多次，但是最后一次计算结果必然是正确的。
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        if (widthMode == MeasureSpec.AT_MOST) {
+            //SlipView的宽度不应该是wrap_content，否则侧滑菜单可能无法隐藏
+            throw new AssertionError("The width of SlipView can not be wrap_content!");
+        }
+
         int childCount = getChildCount();
-        int sumDistance = 0;
+        int lineWidth = 0;
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
-            sumDistance += child.getMeasuredWidth();
+            measureChild(child, widthMeasureSpec, heightMeasureSpec);
+            lineWidth += child.getMeasuredWidth();
         }
 
         /**
-         * sumDistance为SlipView在水平方向的总长度，getMeasuredWidth()为SlipView
-         * 显示的长度，两者相减则是隐藏在右侧的菜单的长度。
+         * lineWidth为SlipView所有child在水平方向的总长度，getMeasuredWidth()
+         * 为SlipView的长度，两者相减则是隐藏在右侧的菜单的长度。
          */
-        menuDistance = sumDistance - getMeasuredWidth();
+        menuWidth = lineWidth - getMeasuredWidth();
     }
 
     @Override
@@ -170,8 +172,8 @@ public class SlipView extends LinearLayout {
                 int targetScrollX = getScrollX() + deltaX;
                 if (targetScrollX <= 0) {
                     scrollTo(0, 0);
-                } else if (targetScrollX > menuDistance) {
-                    scrollTo(menuDistance, 0);
+                } else if (targetScrollX > menuWidth) {
+                    scrollTo(menuWidth, 0);
                 } else {
                     scrollBy(deltaX, 0);
                 }
@@ -183,11 +185,11 @@ public class SlipView extends LinearLayout {
                 hasConsumeDownEventByChild = true;
                 int xVelocity = getXVelocity();          //通过加速度方向来判断手指抬起时正在朝哪边滚动
                 if (xVelocity < 0) {
-                    dx = menuDistance - getScrollX();
+                    dx = menuWidth - getScrollX();
                 } else if (xVelocity > 0) {
                     dx = -getScrollX();
                 } else if (getScrollX() >= 80){
-                    dx = menuDistance - getScrollX();
+                    dx = menuWidth - getScrollX();
                 } else {
                     dx = -getScrollX();
                 }
