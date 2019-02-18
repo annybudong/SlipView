@@ -6,11 +6,10 @@ import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.widget.LinearLayout;
+import android.view.ViewGroup;
 import android.widget.Scroller;
 
-public class SlipView extends LinearLayout {
-
+public class SlipView extends ViewGroup {
     public interface OnScrollListener {
 
         void onScrollStart();
@@ -26,21 +25,18 @@ public class SlipView extends LinearLayout {
     private int menuWidth;      //菜单宽度
     private int touchSlop;      //超过此距离，认为手指正在滑动
 
-    private boolean inited = false;                         //是否已初始化
     private boolean scrollable = true;                      //是否允许滚动
     private boolean isScrolling = false;                    //是否正在滚动
     private boolean hasConsumeDownEventByChild = true;      //child是否消费了down事件
 
-    private OnScrollListener onScrollListener;
+    private SlipView.OnScrollListener onScrollListener;
 
     public SlipView(Context context) {
-        super(context);
-        init(context);
+        this(context, null);
     }
 
     public SlipView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context);
+        this(context, attrs, 0);
     }
 
     public SlipView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -49,64 +45,89 @@ public class SlipView extends LinearLayout {
     }
 
     private void init(Context context) {
-        if (!inited) {
-            scroller = new Scroller(context);
-            inited = true;
-            touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
-        }
+        scroller = new Scroller(context);
+        touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
     }
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-        if (getOrientation() != HORIZONTAL) {
-            throw new AssertionError("The orientation of SlipView must be HORIZONTAL!");
-        }
-
         if (getChildCount() <= 1) {
-            throw new AssertionError("The count of child in SlipView must be greater than 1!");
+            throw new AssertionError("The child-count of SlipView must be greater than 1!");
         }
 
-        LinearLayout.LayoutParams params = (LayoutParams) getChildAt(0).getLayoutParams();
+        View firstChild = getChildAt(0);
+        MarginLayoutParams params = (MarginLayoutParams) firstChild.getLayoutParams();
         if (params.width != LayoutParams.MATCH_PARENT) {
-            throw new AssertionError("The width of first child in SlipView must be MATCH_PARENT!");
+            throw new AssertionError("The width of the first child in SlipView must be MATCH_PARENT!");
+        }
+
+        if (firstChild.getVisibility() == View.GONE) {
+            throw new AssertionError("The visibility of the first child of SlipView can not be GONE!");
         }
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        /**
-         * super.onMeasure必须放在第一行调用，因为继承的是LinearLayout，所以要遵循LinearLayout本身的测量机制，
-         * 我们不应该在这里进行任何的测量操作，否则可能会导致LinearLayout本身的布局行为出现异常。
-         * 
-         * 如果SlipView继承的是ViewGroup，则我们可以随心所欲的进行测量。
-         */
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);      //MeasureSpec.EXACTLY对应match_parent和100dp
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);    //MeasureSpec.AT_MOST对应wrap_content
+
         if (widthMode == MeasureSpec.AT_MOST) {
             //SlipView的宽度不应该是wrap_content，否则侧滑菜单可能无法隐藏
             throw new AssertionError("The width of SlipView can not be wrap_content!");
         }
 
+        int height = 0;
+        menuWidth = 0;
+
         int childCount = getChildCount();
-        int lineWidth = 0;
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
-            int childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec,
-                    getPaddingLeft() + getPaddingRight(), child.getLayoutParams().width);
-            int childWidthMode = MeasureSpec.getMode(childWidthMeasureSpec);
-            if (i > 0 && childWidthMode == MeasureSpec.AT_MOST) {
-                throw new AssertionError("The width of menu in SlipView can not be wrap_content! Please check your layout file.");
+            if (child.getVisibility() == View.GONE) {
+                continue;
             }
-            lineWidth += child.getMeasuredWidth();
+            measureChild(child, widthMeasureSpec, heightMeasureSpec);
+            MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+            if (i == 0) {
+                int dstWidth = child.getMeasuredWidth() - lp.leftMargin - lp.rightMargin;
+                int childWidthSpec = MeasureSpec.makeMeasureSpec(dstWidth, MeasureSpec.EXACTLY);
+                int childHeightSpec = getChildMeasureSpec(heightMeasureSpec, getPaddingTop() + getPaddingBottom(), lp.height);
+                child.measure(childWidthSpec, childHeightSpec);
+            }
+            int childWidth = child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
+            int childHeight = child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin;
+            height = Math.max(height, childHeight);
+            if (i > 0) {
+                menuWidth += childWidth;
+            }
         }
 
-        /**
-         * lineWidth为SlipView所有child在水平方向的总长度，getMeasuredWidth()
-         * 为SlipView的长度，两者相减则是隐藏在右侧的菜单的长度。
-         */
-        menuWidth = lineWidth - getMeasuredWidth();
+        setMeasuredDimension(widthSize, heightMode == MeasureSpec.EXACTLY ? heightSize : height + getPaddingTop() + getPaddingBottom());
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        int left = getPaddingLeft();
+        int top = getPaddingTop();
+        int childCount = getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            View child = getChildAt(i);
+            if (child.getVisibility() == View.GONE) {
+                continue;
+            }
+
+            MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+            int lc = left + lp.leftMargin;
+            int tc = top + lp.topMargin;
+            int rc = lc + child.getMeasuredWidth();
+            int bc = tc + child.getMeasuredHeight();
+            child.layout(lc, tc, rc, bc);
+
+            left += child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
+        }
     }
 
     @Override
@@ -277,7 +298,12 @@ public class SlipView extends LinearLayout {
         return getScrollX() > 0 ? true : false;
     }
 
-    public void setOnScrollListener(OnScrollListener listener) {
+    public void setOnScrollListener(SlipView.OnScrollListener listener) {
         this.onScrollListener = listener;
+    }
+
+    @Override
+    public LayoutParams generateLayoutParams(AttributeSet attrs) {
+        return new MarginLayoutParams(getContext(), attrs);
     }
 }

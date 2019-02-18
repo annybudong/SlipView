@@ -7,24 +7,25 @@ github上有不少左滑控件，有些存在bug，有些写得太重学习成�
 使用方式特别简单，配置xml就好：
 
 ```
-<com.annybudong.slipview.SlipView xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<com.github.annybudong.slipview.SlipView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
-    android:orientation="horizontal">
+    android:layout_height="70dp">
+
     <TextView
         android:id="@+id/content"
-        android:clickable="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:textSize="16sp"/>
+        android:textSize="20dp"/>
+
     <TextView
         android:id="@+id/menu_delete"
         android:layout_width="100dp"
         android:layout_height="match_parent"
         android:background="#ff7766"
         android:text="删除"
-        android:textSize="16sp"
+        android:textSize="20dp"
         android:textColor="#000000"
         android:gravity="center"/>
     <TextView
@@ -33,10 +34,10 @@ github上有不少左滑控件，有些存在bug，有些写得太重学习成�
         android:layout_height="match_parent"
         android:text="编辑"
         android:background="#00ff88"
-        android:textSize="16sp"
+        android:textSize="20dp"
         android:textColor="#000000"
         android:gravity="center"/>
-</com.annybudong.slipview.SlipView>
+</com.github.annybudong.slipview.SlipView>
 ```
 
 第一个TextView是显示区域，后面两个TextView就是左滑按钮，如果想要更多左滑按钮，依次添加就好。
