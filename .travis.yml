@@ -1,24 +1,20 @@
-language: android
-android:
+language: android   # 声明构建语言环境
+
+notifications:      # 每次构建的时候是否通知，如果不想收到通知邮箱（个人感觉邮件贼烦），那就设置 false 吧
+  email: false
+
+sudo: false         # sudo 权限
+
+android:            # 配置信息
   components:
-    # Uncomment the lines below if you want to
-    # use the latest revision of Android SDK Tools
-    # - platform-tools
-    # - tools
+    - tools
+    - build-tools-23.0.2              
+    - android-23                     
+    - extra-android-m2repository     # Android Support Repository
+    - extra-android-support          # Support Library
 
-    # The BuildTools version used by your project
-    - build-tools-19.1.0
+before_install:     
+ - chmod +x gradlew  # 改变 gradlew 的访问权限
 
-    # The SDK version used to compile your project
-    - android-19
-
-    # Additional components
-    - extra-google-google_play_services
-    - extra-google-m2repository
-    - extra-android-m2repository
-    - addon-google_apis-google-19
-
-    # Specify at least one system image,
-    # if you need to run emulator(s) during your tests
-    - sys-img-armeabi-v7a-android-19
-    - sys-img-x86-android-17
+script:              # 执行:下面的命令
+ - ./gradlew assembleRelease
