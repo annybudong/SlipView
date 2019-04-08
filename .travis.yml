@@ -16,10 +16,10 @@ android:            # 配置信息
     # - add-on
     # - extra
 
-# licenses:
-#   - 'android-sdk-preview-license-.+'
-#   - 'android-sdk-license-.+'
-#   - 'google-gdk-license-.+'
+licenses:
+  - 'android-sdk-preview-license-.+'
+  - 'android-sdk-license-.+'
+  - 'google-gdk-license-.+'
 
 before_install:     
  - chmod +x gradlew  # 改变 gradlew 的访问权限
