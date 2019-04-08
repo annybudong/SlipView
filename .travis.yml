@@ -8,10 +8,15 @@ sudo: false         # sudo 权限
 android:            # 配置信息
   components:
     - tools
-    - build-tools-23.0.2              
-    - android-23                     
+    - build-tools-25.0.2              
+    - android-25                     
     - extra-android-m2repository     # Android Support Repository
     - extra-android-support          # Support Library
+
+licenses:
+  - 'android-sdk-preview-license-.+'
+  - 'android-sdk-license-.+'
+  - 'google-gdk-license-.+'
 
 before_install:     
  - chmod +x gradlew  # 改变 gradlew 的访问权限
