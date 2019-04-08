@@ -26,4 +26,4 @@ before_install:
 before_script:
 
 script:              # 执行:下面的命令
- - ./gradlew build
+ - ./gradlew clean
