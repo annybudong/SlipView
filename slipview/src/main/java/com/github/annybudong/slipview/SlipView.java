@@ -49,6 +49,12 @@ public class SlipView extends ViewGroup {
         touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
     }
 
+    /**
+     * @param touchSlop 滚动阈值，水平方向滚动超过此值才会被判断用户在水平滚动，谨慎设置，建议取值在2-8之间
+     */
+    public void setTouchSlop(int touchSlop) {
+        this.touchSlop = touchSlop;
+    }
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
@@ -155,6 +161,7 @@ public class SlipView extends ViewGroup {
                     return true;
                 }
 
+                lastY = y;
                 lastX = x;
                 break;
         }

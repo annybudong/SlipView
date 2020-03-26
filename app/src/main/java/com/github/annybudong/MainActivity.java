@@ -1,11 +1,7 @@
 package com.github.annybudong;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +9,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.annybudong.slipview.SlipView;
 
@@ -103,15 +104,16 @@ public class MainActivity extends AppCompatActivity {
             public ViewHolder(final View itemView) {
                 super(itemView);
                 rooView = (SlipView) itemView;
+                rooView.setTouchSlop(4);
                 contentTv = (TextView) itemView.findViewById(R.id.content);
                 deleteMenu = (TextView) itemView.findViewById(R.id.menu_delete);
                 editMenu = (TextView) itemView.findViewById(R.id.menu_edit);
                 contentTv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        scrollable = !scrollable;
-                        rooView.enableScroll(scrollable);
-                        Toast.makeText(ctx, "允许侧滑:" + scrollable, Toast.LENGTH_SHORT).show();
+//                        scrollable = !scrollable;
+//                        rooView.enableScroll(scrollable);
+//                        Toast.makeText(ctx, "允许侧滑:" + scrollable, Toast.LENGTH_SHORT).show();
                     }
                 });
                 deleteMenu.setOnClickListener(new View.OnClickListener() {
