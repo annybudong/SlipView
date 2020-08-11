@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,14 +39,20 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+
+        //分割线
+        DividerItemDecoration divider = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+        divider.setDrawable(ContextCompat.getDrawable(this, R.color.color_DDDDDD));
+        recyclerView.addItemDecoration(divider);
+
+//        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         recyclerView.setAdapter(new MyAdapter(this, mockData()));
     }
 
     private List<String> mockData() {
         List<String> data = new ArrayList<>();
         String temp = " item";
-        for(int i = 0; i < 50; i++) {
+        for(int i = 0; i < 5; i++) {
             data.add(i + temp);
         }
 
@@ -64,18 +71,29 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            System.out.println("zhaomin onCreateViewHolder");
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_layout, parent, false);
             return new ViewHolder(v);
         }
 
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
+        public void onBindViewHolder(ViewHolder holder, final int position) {
+            System.out.println("zhaomin onBindViewHolder");
             // 绑定数据
             holder.contentTv.setText(data.get(position));
             holder.contentTv.setTag(position);
             holder.rooView.closeMenu(0);
             holder.rooView.setOnScrollListener(this);
+            holder.deleteMenu.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    data.remove(position);
+                    notifyItemRemoved(position);
+                    notifyItemRangeChanged(position, getItemCount() - position);
+                    Toast.makeText(ctx, "click delete.", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
         @Override
@@ -114,12 +132,6 @@ public class MainActivity extends AppCompatActivity {
 //                        scrollable = !scrollable;
 //                        rooView.enableScroll(scrollable);
 //                        Toast.makeText(ctx, "允许侧滑:" + scrollable, Toast.LENGTH_SHORT).show();
-                    }
-                });
-                deleteMenu.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(ctx, "click delete.", Toast.LENGTH_SHORT).show();
                     }
                 });
                 editMenu.setOnClickListener(new View.OnClickListener() {
