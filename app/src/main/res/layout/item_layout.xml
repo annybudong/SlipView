@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.github.annybudong.slipview.SlipView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:paddingTop="50px"
+    android:paddingBottom="50px"
     android:layout_width="match_parent"
-    android:layout_height="70dp">
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:background="@color/color_DDDDDD"
+        android:layout_height="200px"
         android:gravity="center"
         android:textSize="20dp"/>
 
     <TextView
         android:id="@+id/menu_delete"
-        android:layout_width="100dp"
+        android:layout_width="200px"
         android:layout_height="match_parent"
         android:background="#ff7766"
         android:text="删除"
@@ -21,7 +24,7 @@
         android:gravity="center"/>
     <TextView
         android:id="@+id/menu_edit"
-        android:layout_width="100dp"
+        android:layout_width="200px"
         android:layout_height="match_parent"
         android:text="编辑"
         android:background="#00ff88"

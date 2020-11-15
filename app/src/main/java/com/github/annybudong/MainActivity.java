@@ -1,6 +1,7 @@
 package com.github.annybudong;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +18,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.annybudong.slipview.SlipView;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,15 +74,13 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            System.out.println("zhaomin onCreateViewHolder");
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_layout, parent, false);
+            SlipView v = (SlipView) LayoutInflater.from(parent.getContext()).inflate(R.layout.item_layout, parent, false);
             return new ViewHolder(v);
         }
 
 
         @Override
         public void onBindViewHolder(ViewHolder holder, final int position) {
-            System.out.println("zhaomin onBindViewHolder");
             // 绑定数据
             holder.contentTv.setText(data.get(position));
             holder.contentTv.setTag(position);
@@ -126,14 +127,14 @@ public class MainActivity extends AppCompatActivity {
                 contentTv = (TextView) itemView.findViewById(R.id.content);
                 deleteMenu = (TextView) itemView.findViewById(R.id.menu_delete);
                 editMenu = (TextView) itemView.findViewById(R.id.menu_edit);
-                contentTv.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+//                contentTv.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
 //                        scrollable = !scrollable;
 //                        rooView.enableScroll(scrollable);
 //                        Toast.makeText(ctx, "允许侧滑:" + scrollable, Toast.LENGTH_SHORT).show();
-                    }
-                });
+//                    }
+//                });
                 editMenu.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

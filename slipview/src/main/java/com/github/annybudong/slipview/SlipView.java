@@ -1,6 +1,7 @@
 package com.github.annybudong.slipview;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -24,6 +25,9 @@ public class SlipView extends ViewGroup {
     private int lastY;          //最近一次MotionEvent的y坐标
     private int menuWidth;      //菜单宽度
     private int touchSlop;      //超过此距离，认为手指正在滑动
+
+    private int contentTopMargin;        //content区topMargin
+    private int contentMeasuredHeight;   //content区测量高度
 
     private boolean scrollable = true;                      //是否允许滚动
     private boolean isScrolling = false;                    //是否正在滚动
@@ -95,16 +99,28 @@ public class SlipView extends ViewGroup {
             if (child.getVisibility() == View.GONE) {
                 continue;
             }
-            measureChild(child, widthMeasureSpec, heightMeasureSpec);
+
             MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
             if (i == 0) {
-                int dstWidth = child.getMeasuredWidth() - lp.leftMargin - lp.rightMargin;
-                int childWidthSpec = MeasureSpec.makeMeasureSpec(dstWidth, MeasureSpec.EXACTLY);
-                int childHeightSpec = getChildMeasureSpec(heightMeasureSpec, getPaddingTop() + getPaddingBottom(), lp.height);
-                child.measure(childWidthSpec, childHeightSpec);
+                measureChild(child, widthMeasureSpec, heightMeasureSpec);
+            } else {
+
+                //菜单项的高度和内容项保持一致，故用内容项的高度来测量菜单项
+                int childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec,
+                        getPaddingLeft() + getPaddingRight(), lp.width);
+                final int childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec,
+                        getPaddingTop() + getPaddingBottom(), contentMeasuredHeight);
+                child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
             }
-            int childWidth = child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
-            int childHeight = child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin;
+
+            int childWidth = child.getMeasuredWidth();
+            int childHeight;
+            if (i == 0) {
+                contentMeasuredHeight = child.getMeasuredHeight();
+                childHeight = contentMeasuredHeight + lp.topMargin + lp.bottomMargin;
+            } else {
+                childHeight = child.getMeasuredHeight();    //菜单项不考虑marginTop和marginBottom，其高度始终和content高度进行自适应
+            }
             height = Math.max(height, childHeight);
             if (i > 0) {
                 menuWidth += childWidth;
@@ -126,13 +142,20 @@ public class SlipView extends ViewGroup {
             }
 
             MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
-            int lc = left + lp.leftMargin;
-            int tc = top + lp.topMargin;
+            int lc = left;
+            int tc;
+            if (i == 0) {
+                tc = top + lp.topMargin;
+                contentTopMargin = lp.topMargin;
+            } else {
+                tc = top + contentTopMargin;   //菜单项和内容项高度保持一致
+            }
+
             int rc = lc + child.getMeasuredWidth();
             int bc = tc + child.getMeasuredHeight();
             child.layout(lc, tc, rc, bc);
 
-            left += child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
+            left += child.getMeasuredWidth();
         }
     }
 
